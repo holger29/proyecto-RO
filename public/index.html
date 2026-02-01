@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reuniones Online MVP</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Iconos -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="landing-container">
+        <h1>Bienvenido a la Sala de Reuniones</h1>
+        <p>Conéctate de forma segura y rápida.</p>
+        
+        <div id="status-msg" style="margin-bottom: 20px; color: #aaa;">Buscando reunión activa...</div>
+        
+        <button id="join-btn" class="btn btn-primary" disabled>
+            <i class="fas fa-video"></i> Unirse a la Reunión
+        </button>
+    </div>
+
+    <script>
+        const joinBtn = document.getElementById('join-btn');
+        const statusMsg = document.getElementById('status-msg');
+
+        // Verificar si hay reunión activa al cargar
+        fetch('/api/active-meeting')
+            .then(res => res.json())
+            .then(data => {
+                if (data.roomId) {
+                    statusMsg.innerText = "Hay una reunión en curso.";
+                    joinBtn.disabled = false;
+                    joinBtn.onclick = () => window.location.href = `/meeting?room=${data.roomId}`;
+                } else {
+                    statusMsg.innerText = "No hay reuniones activas en este momento.";
+                }
+            })
+            .catch(err => {
+                statusMsg.innerText = "Error conectando con el servidor.";
+            });
+    </script>
+</body>
+</html>
